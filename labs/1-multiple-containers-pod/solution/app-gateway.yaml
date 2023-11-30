@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-gateway
+  namespace: 1-multiple-containers-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - image: radial/busyboxplus:curl
+        name: busyboxplus
+        command: ["sh", "-c", "while true; do curl localhost:9090; sleep 5; done"]
+      - image: haproxy:2.4
+        name: ambassador
+        volumeMounts:
+        - name: ambassador-config
+          mountPath: /usr/local/etc/haproxy
+        ports:
+        - containerPort: 9090
+          protocol: "TCP"
+      initContainers:
+      - image: busybox:stable
+        name: busybox
+        command: ["sh", "-c", "sleep 10"]
+      volumes:
+      - name: ambassador-config
+        configMap:
+          name: haproxy-config
+          items:
+          - key: haproxy.cfg
+            path: haproxy.cfg

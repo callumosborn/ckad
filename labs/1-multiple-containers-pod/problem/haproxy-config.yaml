@@ -1,0 +1,24 @@
+apiVersion: v1
+data:
+  haproxy.cfg: |
+    global
+        daemon
+        maxconn 256
+
+    defaults
+        mode http
+        timeout connect 5000ms
+        timeout client 50000ms
+        timeout server 50000ms
+
+    frontend ambassador
+        bind *:9090
+        default_backend hive_svc
+
+    backend hive_svc
+        server svc hive-svc:9076 maxconn 32
+
+kind: ConfigMap
+metadata:
+  namespace: 1-multiple-containers-pod
+  name: haproxy-config

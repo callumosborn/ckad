@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-gateway
+  namespace: 1-multiple-containers-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - image: radial/busyboxplus:curl
+        name: busyboxplus
+        command: ["sh", "-c", "while true; do curl hive-svc:9090; sleep 5; done"]

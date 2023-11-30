@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hive-content
+  namespace: 1-multiple-containers-pod
+data:
+  index.html: '{"message": "Welcome to the Hive API!"}'
